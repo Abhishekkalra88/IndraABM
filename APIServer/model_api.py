@@ -3,7 +3,6 @@ This module restores an env from json and runs it.
 """
 import importlib
 
-from registry.registry import sync_api_restored_model_with_registry, registry
 from APIServer.api_utils import err_return
 import db.model_db as model_db
 
@@ -60,8 +59,8 @@ def run_model(serial_model, periods, indra_dir):
     if model_rec is not None:
         module = module_from_model(model_rec)
         model = module.create_model(serial_obj=serial_model)
-        registry.load_reg(model.exec_key)
-        sync_api_restored_model_with_registry(model, model.exec_key)
+        #registry.load_reg(model.exec_key)
+        #sync_api_restored_model_with_registry(model, model.exec_key)
         model.runN(periods)
         return model
     else:

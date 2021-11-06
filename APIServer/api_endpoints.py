@@ -7,7 +7,6 @@ import werkzeug.exceptions as wz
 import db.menus_db as mdb
 import db.model_db as model_db
 import models.basic as bsc
-import registry.registry as reg
 
 # not like this:
 from flask import request
@@ -15,8 +14,6 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restx import Resource, Api, fields
 from propargs.propargs import PropArgs
-from registry.registry import registry, create_exec_env
-from registry.registry import get_model, get_agent
 from APIServer.api_utils import json_converter
 from APIServer.model_api import run_model, create_model, create_model_for_test
 from APIServer.props_api import get_props
@@ -36,8 +33,8 @@ CORS(app)
 api = Api(app)
 
 # Create a test model for testing API server:
-bsc.create_model(create_for_test=True,
-                 exec_key=reg.TEST_EXEC_KEY)
+#bsc.create_model(create_for_test=True,
+#                 exec_key=reg.TEST_EXEC_KEY)
 
 indra_dir = get_indra_home()
 
@@ -58,7 +55,7 @@ def get_model_if_exists(exec_key):
     A function that returns the model running at `exec_key`
     or raises a 404 error if it doesn't exist.
     """
-    model = get_model(exec_key)
+    model = modelManager.get_model(exec_key)
     if model is None:
         raise wz.NotFound(f"Model Key: {exec_key}, not found.")
     return model
@@ -105,18 +102,18 @@ create_model_spec = api.model("model_specification", {
 })
 
 
-@api.route('/registry')
-class Registry(Resource):
+@api.route('/modelmanager')
+class ModelManager(Resource):
     """
-    A class to interact with the registry through the API.
+    A class to interact with the model manager through the API.
     """
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
     def get(self):
         """
-        Fetches the registry as {"exec_key": "model name", etc. }
+        Fetches all the models as {"exec_key": "model name", etc. }
         """
-        return registry.to_json()
+        return modelManager.to_json()
 
 
 model_name_defn = api.model("model_name", {
@@ -155,7 +152,7 @@ class Model(Resource):
                 raise (wz.NotFound(f"Model {exec_key} doesn't exist."))
             # check if a test model already exists against the given exec_
             # key which matches the model id
-            model = get_model(exec_key)
+            model = modelManager.get_model(exec_key)
             if model is not None:
                 return {"msg": f'A test model {model.name} already exists'}
             else:

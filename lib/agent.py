@@ -130,7 +130,6 @@ def switch(agent_nm, grp1_nm, grp2_nm, exec_key):
     Move agent from grp1 to grp2.
     We first must recover agent objects from the registry.
     """
-    import registry.registry as reg
     agent = reg.get_agent(agent_nm, exec_key)
     if agent is None:
         if DEBUG.debug_lib:
@@ -180,7 +179,6 @@ class Agent(object):
 
     def __init__(self, name, attrs=None, action=None, duration=INF,
                  prim_group=None, serial_obj=None, exec_key=None, **kwargs):
-        from registry.registry import reg_agent
         if serial_obj is not None:
             # We've moved the registering of restored objects into the registry
             # itself.
@@ -189,10 +187,6 @@ class Agent(object):
             self.exec_key = exec_key
             self._construct_anew(name, attrs=attrs, action=action,
                                  duration=duration, prim_group=prim_group)
-            # some groups are created on the fly and don't need to be
-            # registered!
-            if self.exec_key is not None:
-                reg_agent(self.name, self, self.exec_key)
 
     def _construct_anew(self, name, attrs=None, action=None,
                         duration=INF, prim_group=None):
@@ -246,7 +240,6 @@ class Agent(object):
         return pickle_file
 
     def _serialize_func(self, fmbr):
-        from registry.registry import registry
         # only pickle if action is not none and it hasnt been pickled already
         if fmbr is None:
             return None

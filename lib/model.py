@@ -15,7 +15,7 @@ from lib.user import TestUser, TermUser, APIUser
 from lib.user import USER_EXIT
 import lib.user as user
 from lib.display_methods import RED, BLUE
-from registry.registry import create_exec_env, reg_model
+import uuid
 
 DEBUG = Debug()
 
@@ -107,15 +107,8 @@ class Model():
         self.module = model_nm
         self.grp_struct = grp_struct
         self.handle_props(props)
-        self.exec_key = exec_key
-        if self.props.get("exec_key",
-                          None) is not None:
-            self.exec_key = self.props.get("exec_key")
-        self.exec_key = create_exec_env(create_for_test=create_for_test,
-                                        exec_key=exec_key)
+        self.exec_key = str(uuid.uuid4())
         self.create_user()
-        # register model
-        reg_model(self, self.exec_key)
         self.groups = self.create_groups()
         self.env = self.create_env(env_action=env_action,
                                    random_placing=random_placing)

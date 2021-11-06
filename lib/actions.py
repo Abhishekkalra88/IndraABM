@@ -8,7 +8,6 @@ import lib.agent as agt
 import lib.display_methods as disp
 import lib.space as spc
 import lib.utils as utl
-import registry.registry as reg
 
 DEBUG = utl.Debug()
 
