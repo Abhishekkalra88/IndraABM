@@ -5,6 +5,7 @@ from APIServer.model_api import run_model, create_model, create_model_for_test
 class CommunicationType(Enum):
   RUN_MODEL = auto()
   AGENT_INFO = auto()
+  GET_MODEL = auto()
 
 class Message:
   def __init__(self, communication_type, data):
@@ -20,4 +21,6 @@ def createModelProcess(conn, model_id, payload, indra_dir):
         if message.type == CommunicationType.RUN_MODEL:
           periods = message.data.runtime
           model.runN(int(periods))
+          conn.send(model)
+        elif message.type == CommunicationType.GET_MODEL:
           conn.send(model)

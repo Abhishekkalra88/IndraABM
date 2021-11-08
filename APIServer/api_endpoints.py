@@ -284,7 +284,7 @@ class MenuForModel(Resource):
 
 
 env = api.model("env", {
-    "model": fields.String("Should be json rep of model.")
+    "exec_key": fields.String("Exec key of the model to be run.")
 })
 
 
@@ -293,7 +293,6 @@ class RunModel(Resource):
     """
     This endpoint deals with running models.
     """
-    @api.doc(params={'exec_key': 'Indra execution key.'})
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
     @api.response(HTTPStatus.INTERNAL_SERVER_ERROR, 'Server Error')
