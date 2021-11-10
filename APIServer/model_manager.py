@@ -41,7 +41,7 @@ class ModelManager:
         modelProcess = self.processes[exec_key]
         if(modelProcess is None):
             return None
-        message = Message(CommunicationType.RUN_MODEL, {runtime})
+        message = Message(CommunicationType.RUN_MODEL, {'runtime': runtime})
         modelProcess.parent_conn.send(message)
         model = modelProcess.parent_conn.recv()
         return model

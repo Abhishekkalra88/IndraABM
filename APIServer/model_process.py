@@ -19,7 +19,7 @@ def createModelProcess(conn, model_id, payload, indra_dir):
     while True:                                 # The process then goes into an infinite loop listening on the pipe
         message = conn.recv()
         if message.type == CommunicationType.RUN_MODEL:
-          periods = message.data.runtime
+          periods = message.data['runtime']
           model.runN(int(periods))
           conn.send(model)
         elif message.type == CommunicationType.GET_MODEL:
