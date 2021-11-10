@@ -9,7 +9,7 @@ from db.model_db import get_model_by_id
 modelManager = None
 
 class ModelProcessAttrs:
-    def __init__(self, process, parent_conn, model_id, model):
+    def __init__(self, process, parent_conn, model_id):
         self.process = process
         self.parent_conn = parent_conn
         self.model_id = model_id

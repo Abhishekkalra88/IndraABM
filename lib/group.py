@@ -178,8 +178,6 @@ class Group(Agent):
         Here we turn a group into a serialized object.
         """
         rep = super().to_json()
-        mbr_creator_val = self._serialize_func(self.mbr_creator)
-        rep["mbr_creator"] = mbr_creator_val
         rep["num_mbrs_ever"] = self.num_mbrs_ever
         rep["type"] = self.type
         rep["color"] = self.color

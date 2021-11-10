@@ -239,23 +239,7 @@ class Agent(object):
                                            fname))
         return pickle_file
 
-    def _serialize_func(self, fmbr):
-        # only pickle if action is not none and it hasnt been pickled already
-        if fmbr is None:
-            return None
-
-        fname = fmbr.__name__
-        # function exists but not yet pickled:
-        if fname not in registry[self.exec_key]['functions']:
-            pickle_file = self.__get_pickle_file(fname)
-            self.__pickle_func(pickle_file, fmbr)
-            return pickle_file
-        # function has been pickled before:
-        else:
-            return registry[self.exec_key]['functions'][fname]
-
     def to_json(self):
-        action_val = self._serialize_func(self.action)
         return {"name": self.name,
                 "type": self.type,
                 "duration": self.duration,
@@ -264,9 +248,8 @@ class Agent(object):
                 "active": self.active,
                 "prim_group": self.prim_group,
                 "neighbors": None,
-                "action": action_val,
                 "exec_key": self.exec_key,
-                }
+            }
 
     def _restore_func(self, serial_agent, json_name):
         fpath = serial_agent[json_name]
