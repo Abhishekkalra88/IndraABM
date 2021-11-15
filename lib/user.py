@@ -110,7 +110,7 @@ class User(Agent):
     """
 
     def __init__(self, name="User", model=None, **kwargs):
-        super().__init__(name, **kwargs)
+        super().__init__(name, model=model, **kwargs)
         self.menu = get_menu_json()
         # self.menu = mdb.get_run_menu()
         # print(new_menu)

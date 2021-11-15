@@ -93,6 +93,7 @@ class Model():
                  env_action=None, random_placing=True,
                  serial_obj=None, exec_key=None, create_for_test=False):
         self.num_switches = 0
+        self.agents = {}
         if serial_obj is None:
             self.create_anew(model_nm, props, grp_struct, exec_key,
                              env_action, random_placing, create_for_test)
@@ -229,7 +230,7 @@ class Model():
         self.env = Env(self.module, members=self.groups,
                        exec_key=self.exec_key, width=self.width,
                        height=self.height, action=env_action,
-                       random_placing=random_placing)
+                       random_placing=random_placing, model=self)
         self.env.user = self.user
         self.env.user_type = self.user_type
         self.create_pop_hist()
@@ -262,6 +263,7 @@ class Model():
                                      num_mbrs=num_mbrs,
                                      mbr_creator=grp_val(grp, MBR_CREATOR),
                                      mbr_action=grp_val(grp, MBR_ACTION),
+                                     model = self,
                                      exec_key=self.exec_key))
         return self.groups
 
@@ -309,6 +311,12 @@ class Model():
             self.update_pop_hist()
             self.handle_womb()
         return num_acts
+
+    def reg_agent(self, name, agent):
+        self.agents[name] = agent
+
+    def get_agent(self, name):
+        return self.agents[name]
 
     def handle_womb(self):
         """
@@ -370,7 +378,7 @@ class Model():
         """
         if self.switches is not None:
             for (agent_nm, from_grp_nm, to_grp_nm) in self.switches:
-                switch(agent_nm, from_grp_nm, to_grp_nm, self.exec_key)
+                switch(self, agent_nm, from_grp_nm, to_grp_nm, self.exec_key)
 
                 self.num_switches += 1
             self.switches.clear()

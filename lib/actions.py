@@ -76,7 +76,7 @@ def add_switch(agent, old_group, new_group):
     """
     Switch an agent between groups.
     """
-    model = get_model(agent)
+    model = agent.model
     assert model is not None
     model.add_switch(str(agent),
                      old_group,

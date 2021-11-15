@@ -134,7 +134,7 @@ class Group(Agent):
                  action=None, mbr_creator=None,
                  mbr_action=None, color=None,
                  num_mbrs=None, serial_obj=None,
-                 exec_key=None,
+                 exec_key=None, model=None,
                  **kwargs):
 
         self.num_mbrs_ever = 0
@@ -142,7 +142,7 @@ class Group(Agent):
 
         super().__init__(name, attrs=attrs, duration=INF,
                          action=action, serial_obj=serial_obj,
-                         exec_key=exec_key,
+                         exec_key=exec_key, model=model,
                          **kwargs)
         self.type = type(self).__name__
 
@@ -164,7 +164,8 @@ class Group(Agent):
                 for i in range(num_mbrs):
                     join(self, mbr_creator(self.name, i,
                                            action=mbr_action,
-                                           exec_key=self.exec_key))
+                                           exec_key=self.exec_key,
+                                           model = model))
                     # skip passing kwargs for now: **kwargs))
 
     def restore(self, serial_obj):

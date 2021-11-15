@@ -119,14 +119,10 @@ def get_xy_from_str(coord_str):
     return [int(parts[0]), int(parts[1])]
 
 
-def get_agents_env(agent):
-    from registry.registry import get_env
-    return get_env(agent.exec_key)
-
 
 def exists_neighbor(agent, pred=None, exclude_self=True, size=1,
                     region_type=None, **kwargs):
-    env = get_agents_env(agent)
+    env = agent.model.env
     return env.exists_neighbor(agent,
                                pred=pred,
                                exclude_self=exclude_self,
@@ -411,11 +407,10 @@ class Space(Group):
         If cell is empty return None.
         Always make location a str for serialization.
         """
-        from registry.registry import get_agent
         if self.is_empty(x, y):
             return None
         agent_nm = self.locations[str((x, y))]
-        return get_agent(agent_nm, self.exec_key)
+        return self.model.get_agent(agent_nm)
 
     def place_member(self, mbr, max_move=None, xy=None, attempts=0):
         """

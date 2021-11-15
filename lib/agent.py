@@ -125,22 +125,22 @@ def split(agent1, agent2):
         return True
 
 
-def switch(agent_nm, grp1_nm, grp2_nm, exec_key):
+def switch(model, agent_nm, grp1_nm, grp2_nm, exec_key):
     """
     Move agent from grp1 to grp2.
     We first must recover agent objects from the registry.
     """
-    agent = reg.get_agent(agent_nm, exec_key)
+    agent = model.get_agent(agent_nm)
     if agent is None:
         if DEBUG.debug_lib:
             print("In switch; could not find agent: " + str(agent))
         return
-    grp1 = reg.get_agent(grp1_nm, exec_key)
+    grp1 = model.get_agent(grp1_nm)
     if grp1 is None:
         if DEBUG.debug_lib:
             print("In switch; could not find from group: " + str(grp1))
         return
-    grp2 = reg.get_agent(grp2_nm, exec_key)
+    grp2 = model.get_agent(grp2_nm)
     if grp2 is None:
         if DEBUG.debug_lib:
             print("In switch; could not find to group: " + str(grp2))
@@ -178,15 +178,12 @@ class Agent(object):
     """
 
     def __init__(self, name, attrs=None, action=None, duration=INF,
-                 prim_group=None, serial_obj=None, exec_key=None, **kwargs):
-        if serial_obj is not None:
-            # We've moved the registering of restored objects into the registry
-            # itself.
-            self.restore(serial_obj)
-        else:  # or build it anew:
+                 prim_group=None, model=None, exec_key=None, **kwargs):
+            self.model = model
             self.exec_key = exec_key
             self._construct_anew(name, attrs=attrs, action=action,
                                  duration=duration, prim_group=prim_group)
+            self.model.reg_agent(self.name, self)
 
     def _construct_anew(self, name, attrs=None, action=None,
                         duration=INF, prim_group=None):
@@ -250,29 +247,6 @@ class Agent(object):
                 "neighbors": None,
                 "exec_key": self.exec_key,
             }
-
-    def _restore_func(self, serial_agent, json_name):
-        fpath = serial_agent[json_name]
-        if fpath is not None:
-            with open(fpath, 'rb') as file:
-                return pickle.load(file)
-        else:
-            return None
-
-    def from_json(self, serial_agent):
-        self.action = self._restore_func(serial_agent, "action")
-        self.active = serial_agent["active"]
-        self.attrs = serial_agent["attrs"]
-        if not serial_agent["pos"]:
-            self.pos = None
-        else:
-            self.pos = tuple(serial_agent["pos"])
-        self.duration = int(serial_agent["duration"])
-        self.name = serial_agent["name"]
-        self.neighbors = None  # these must be re-created every run
-        self.prim_group = serial_agent["prim_group"]
-        self.type = serial_agent["type"]
-        self.exec_key = serial_agent["exec_key"]
 
     def __repr__(self):
         return json.dumps(self.to_json(), cls=AgentEncoder, indent=4)
@@ -410,8 +384,7 @@ class Agent(object):
         Move this agent to a random pos within max_move
         of its current pos.
         """
-        from registry.registry import get_env
-        env = get_env(self.exec_key)
+        env = self.model.env
         if (self.is_located() and env is not None
                 and not env.is_full()):
             new_xy = None
