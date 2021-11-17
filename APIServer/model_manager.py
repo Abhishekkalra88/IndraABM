@@ -18,8 +18,7 @@ class ModelProcessAttrs:
 class ModelManager:
     def __init__(self):
         print("Creating new model manager")
-        self.processes = LRU(cpu_count() * 5 + 1) # Not too many processes but also not too little
-        #If we ahve too many processes, spawn will then use LRU to get 'rid' of them.
+        self.processes = LRU(cpu_count() * 5 + 1) # Not too many processes but also not too little, this is the total amount we're permitted to have
 
     def get_model(self, exec_key): 
         return self.processes[exec_key] #Every model has a unique execution key that it can be idenfitied with
