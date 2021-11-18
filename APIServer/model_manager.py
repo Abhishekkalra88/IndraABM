@@ -19,6 +19,25 @@ class ModelManager:
     def __init__(self):
         print("Creating new model manager")
         self.processes = LRU(cpu_count() * 5 + 1) # Not too many processes but also not too little, this is the total amount we're permitted to have
+        maxSize = cpu_count() * 5 + 1
+        #new code checking whether or not LRU is full:
+        #if full, kill of process 
+        if(len(LRU) == maxSize):
+            name = exec_key
+            filename = "%s.json" % name
+            f = open(filename, "x")
+            #restore the contents of the model in a file
+            data = {}
+            data['model'] = []
+            data['model'].append({
+            'process': self.process,
+            'parent_conn': self.parent_conn,
+            'model_id': self.model_id
+            })
+        with open(filename, 'w') as outfile:
+            json.dump(data, outfile)
+            
+
 
     def get_model(self, exec_key): 
         return self.processes[exec_key] #Every model has a unique execution key that it can be idenfitied with
